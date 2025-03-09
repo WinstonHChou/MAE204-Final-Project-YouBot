@@ -10,8 +10,8 @@ function q_k_1 = NextState(q_k, q_dot_k, dt, max_joint_vel)
 % Returns q_k_1: The next state (configuration) of the robot (12 variables)
 % 
 % The function NextState is based on a simple first-order Euler step:
-% - new arm joint angles = (old arm joint angles) + (joint speeds)dt
-% - new wheel angles = (old wheel angles) + (wheel speeds)dt
+% - new arm joint angles = (old arm joint angles) + (joint speeds)*dt
+% - new wheel angles = (old wheel angles) + (wheel speeds)*dt
 % - new chassis configuration is obtained from odometry, as described in Chapter 13.4  
 
 
