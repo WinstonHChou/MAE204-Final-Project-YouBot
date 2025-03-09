@@ -1,5 +1,5 @@
 # MAE204-Final-Project-YouBot
-WI 25 ECE 276A Project 1: Orientation Tracking
+WI 25 MAE 204 Final Project: YouBot
 
 ## Course Overview
 This is the Final Project for [MAE 204: Robotics](https://tolley.eng.ucsd.edu/Teaching) at UCSD, taught by Professor [Michael T. Tolley](https://tolley.eng.ucsd.edu/).
