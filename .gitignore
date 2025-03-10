@@ -1,0 +1,8 @@
+# mac
+**/__MACOSX/**
+
+# zip
+**/*.zip
+
+# V-REP_Scenes
+**/V-REP_Scenes/**
