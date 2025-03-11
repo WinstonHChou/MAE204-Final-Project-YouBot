@@ -2,6 +2,8 @@ function [traj] = TrajectoryGenerator(T_se_initial, T_sc_initial, T_sc_final, T_
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+addpath('external/ModernRobotics/packages/MATLAB/mr')
+
 % delete old csv file 
 delete('trajectory.csv')
 
