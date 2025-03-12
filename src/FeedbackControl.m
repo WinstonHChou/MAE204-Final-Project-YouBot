@@ -13,7 +13,9 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(T_se, 
 %   - wheelSpeeds        : Commanded wheel speeds (u)
 %   - jointSpeeds        : Commanded arm joint speeds (theta_dot)
 
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+% Body Jacobian 
+
+% Arm Jacobian 
+
 end
 
