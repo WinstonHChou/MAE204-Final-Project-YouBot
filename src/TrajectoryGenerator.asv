@@ -1,20 +1,8 @@
 function [traj] = TrajectoryGenerator(T_se_initial, T_sc_initial, T_sc_final, T_ce_grasp, T_ce_standoff, k)
 % Trajectory Genrator
 %   Inputs: 
-%       - T_se_initial:  This is the initial configuration of the
-%                        end-effector
-%       - T_sc_initial:  The initial configuration of the cube
-%       - T_sc_final:    The final configuration of the cube
-%       - T_ce_grasp:    The configuration of the end-effector relative to
-%                        the cube, while grasping
-%       - T_ce_standoff: The standoff configuration of the end-effector
-%                        above the cube, before and after grasping 
-%       - k:             The number of trajectory reference configurations
-%                        per 0.01 seconds. 
-%   Outputs:
-%       - traj : A representation of the N configurations of the
-%                end-effector along the entire concatenated eight-segment
-%                reference trajectory. 
+%       - T_se_initial: This is the initial configuration of the
+%       end-effector
 
 addpath('external/ModernRobotics/packages/MATLAB/mr')
 
