@@ -1,4 +1,4 @@
-function q_k_1 = NextState(q_k, q_dot_k, dt, max_joint_vel)
+function [q_k_1, joints_checked] = NextState(q_k, q_dot_k, dt, max_joint_vel)
 % *** KINEMATICS Simulator ***
 % Takes q_k: The current state of the robot
 %            (12 variables: 3 for chassis, 5 for arm, 4 for wheel angles)
@@ -8,6 +8,7 @@ function q_k_1 = NextState(q_k, q_dot_k, dt, max_joint_vel)
 %       max_joint_vel: The maximum joint and wheel velocity magnitude (1 parameter)
 % 
 % Returns q_k_1: The next state (configuration) of the robot (12 variables)
+%         joints_checked: The joints within the arbitrary joint limits
 % 
 % The function NextState is based on a simple first-order Euler step:
 % - new arm joint angles = (old arm joint angles) + (joint speeds)*dt
