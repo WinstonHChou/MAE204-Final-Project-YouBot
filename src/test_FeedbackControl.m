@@ -41,5 +41,7 @@ dt = 0.01;
 % Kp and Ki 
 Kp = zeros(6,6);
 Ki = zeros(6,6);
+% Kp = eye(6);
+% Ki = eye(6);
 
 [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, Xd, Xd_next, Kp, Ki, dt)
