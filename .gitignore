@@ -9,3 +9,6 @@
 
 # matlab
 **/*.asv
+
+# Project
+src/trajectory.csv
