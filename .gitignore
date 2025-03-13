@@ -6,3 +6,10 @@
 
 # V-REP_Scenes
 **/V-REP_Scenes/**
+
+# matlab
+**/*.asv
+
+# Project
+src/trajectory.csv
+src/html/**
