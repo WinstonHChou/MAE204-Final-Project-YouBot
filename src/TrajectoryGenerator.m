@@ -46,11 +46,15 @@ function [traj, gripperStates] = TrajectoryGenerator(T_se_initial, T_sc_initial,
     grasp_states = [0, 0, 1, 1, 1, 1, 0, 0];
 
     % Initialize empty outputs
-    traj = cell(1,length(Xstarts)*N);
-    gripperStates = zeros(1,length(Xstarts)*N);
+    n = floor(desired_durations*N);
+    traj = cell(1,sum(n));
+    gripperStates = zeros(1,sum(n));
 
+    prev_sum_n = 0;
     for i = [1:length(Xstarts)]
-        traj(1,1+N*(i-1):N*i) = ScrewTrajectory(Xstarts{i}, Xends{i}, desired_durations(i), N, 5);
-        gripperStates(1,1+N*(i-1):N*i) = grasp_states(i);
+        indices = 1+prev_sum_n : prev_sum_n+n(i);
+        prev_sum_n = prev_sum_n + n(i);
+        traj(1,indices) = ScrewTrajectory(Xstarts{i}, Xends{i}, desired_durations(i), n(i), 5);
+        gripperStates(1,indices) = grasp_states(i);
     end
 end
