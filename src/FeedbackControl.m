@@ -13,9 +13,25 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(T_se, 
 %   - wheelSpeeds        : Commanded wheel speeds (u)
 %   - jointSpeeds        : Commanded arm joint speeds (theta_dot)
 
-% Body Jacobian 
+% Running error 
+persistent errorControl
+
+% Base Jacobian 
 
 % Arm Jacobian 
+Jarm = JacobianBody(Blist, )
+
+% Xerr 
+Xerr = log(inv(T_se)*T_se_d);
+
+% Feedforward reference twist
+refTwist = (1/dt)*log(inv(T_se_d) * T_se_d_next);
+
+% Feedforward plus feedback control law (equation 13.37)
+% twist = 
+
+% Accumulate error every timestep
+errorControl = Xerr * dt;
 
 end
 
