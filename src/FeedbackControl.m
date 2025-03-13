@@ -1,4 +1,4 @@
-function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt)
+function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt)
 %FEEDBACKCONTROL Summary of this function goes here
 %   Inputs: 
 %   - q           : The current state vector (12 variables)
@@ -12,6 +12,7 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackContr
 %                          end-effector frame
 %   - wheelSpeeds        : Commanded wheel speeds (u)
 %   - jointSpeeds        : Commanded arm joint speeds (theta_dot)
+%   - dV_error           : Current error twist
 
     % Running error 
     persistent prev_I;
@@ -54,7 +55,7 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackContr
     %% Control Law
     % Current error twist
     X_err = T_se \ T_se_d;
-    V_error = se3ToVec(MatrixLog6(T_se \ T_se_d));
+    dV_error = se3ToVec(MatrixLog6(T_se \ T_se_d));
 
     % Current reference twist
     X_ref = T_se_d \ T_se_d_next;
@@ -64,9 +65,9 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackContr
     %% Feedback Control (PI Controller)
     % Closed-loop control based on transformation error
     % Proportional term
-    P = Kp * V_error;
+    P = Kp * dV_error;
     % Integral term
-    I = prev_I + Ki * V_error * dt;
+    I = prev_I + Ki * dV_error * dt;
     prev_I = I;
 
     %% FeedForward & Feedback Controller
