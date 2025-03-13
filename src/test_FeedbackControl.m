@@ -39,7 +39,7 @@ Xd_next = [[ 0, 0, 1, 0.6];
 dt = 0.01;
 
 % Kp and Ki 
-Kp = zeros(4);
-Ki = zeros(4);
+Kp = zeros(6,6);
+Ki = zeros(6,6);
 
 [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, Xd, Xd_next, Kp, Ki, dt)

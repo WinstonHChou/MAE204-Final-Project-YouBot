@@ -1,4 +1,4 @@
-function [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt)
+function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt)
 %FEEDBACKCONTROL Summary of this function goes here
 %   Inputs: 
 %   - q           : The current state vector (12 variables)
@@ -14,7 +14,12 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, T_s
 %   - jointSpeeds        : Commanded arm joint speeds (theta_dot)
 
     % Running error 
-    persistent errorControl
+    persistent prev_I;
+
+    if isempty(prev_I)
+        prev_I = zeros(6);
+    end
+
     load("youBotParams.mat")
     
     %% Base Body Jacobian
@@ -43,22 +48,36 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, T_s
     % Ignore Jacobian of the joints who reaches the joint limits
     Jarm(:, ~joints_checked) = 0;
     
-    %% youBot Body Jacobain
-    Jb = [Jarm Jbase]; % order: q_dot = [theta_dot; wheel_speeds]
-    % disp(Jb)
+    %% youBot Body Jacobian
+    Jb = [Jbase Jarm];
 
-    %% Control
-    % Xerr 
-    Xerr = log(inv(T_se)*T_se_d);
+    %% Control Law
+    % Current error twist
+    X_err = T_se \ T_se_d;
+    V_error = se3ToVec(MatrixLog6(T_se \ T_se_d));
+
+    % Current reference twist
+    X_ref = T_se_d \ T_se_d_next;
+    Vd = (1/dt) * MatrixLog6(X_ref);
+    Vd = se3ToVec(Vd);
     
-    % Feedforward reference twist
-    refTwist = (1/dt)*log(inv(T_se_d) * T_se_d_next);
+    %% Feedback Control (PI Controller)
+    % Closed-loop control based on transformation error
+    % Proportional term
+    P = Kp * V_error;
+    % Integral term
+    I = prev_I + Ki * V_error * dt;
+    prev_I = I;
+
+    %% FeedForward & Feedback Controller
+    V = Adjoint(X_err) * Vd + P + I;
     
-    % Feedforward plus feedback control law (equation 13.37)
-    % twist = 
+    % Given pinv tolerance to avoid sigularities
+    q_dot = pinv(Jb, 1e-4) * V;
     
-    % Accumulate error every timestep
-    errorControl = Xerr * dt;
+    endEffectorTwist_e = V;
+    wheelSpeeds = q_dot(1:4);
+    jointSpeeds = q_dot(5:9);
 
 end
 
