@@ -1,12 +1,14 @@
-function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt)
+function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt, FF_enabled, integral_reset)
 %FEEDBACKCONTROL Summary of this function goes here
 %   Inputs: 
-%   - q           : The current state vector (12 variables)
-%   - T_se_d      : The current reference end-effector configuration 
-%   - T_se_d_next : The reference end-effector configuration at the next timestep
-%   - Kp          : P gain matrix
-%   - Ki          : I gain matrix
-%   - dt          : timestep size
+%   - q             : The current state vector (12 variables)
+%   - T_se_d        : The current reference end-effector configuration 
+%   - T_se_d_next   : The reference end-effector configuration at the next timestep
+%   - Kp            : P gain matrix
+%   - Ki            : I gain matrix
+%   - dt            : timestep size
+%   - FF_enabled    : Enable FeedForward Control based on reference twist
+%   - integral_reset: Reset prev_I to 0
 %   Outputs: 
 %   - endEffectorTwist_e : The commanded end-effector twist expressed in
 %                          end-effector frame
@@ -17,7 +19,7 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackCont
     % Running error 
     persistent prev_I;
 
-    if isempty(prev_I)
+    if isempty(prev_I) || integral_reset
         prev_I = zeros(6,1);
     end
 
@@ -71,6 +73,9 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackCont
     prev_I = I;
 
     %% FeedForward & Feedback Controller
+    if ~FF_enabled
+        Vd = zeros(6,1);
+    end
     V = Adjoint(X_err) * Vd + P + I;
     
     % Given pinv tolerance to avoid sigularities

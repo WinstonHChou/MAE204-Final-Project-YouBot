@@ -44,4 +44,6 @@ Ki = zeros(6,6);
 % Kp = eye(6);
 % Ki = eye(6);
 
-[endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, Xd, Xd_next, Kp, Ki, dt)
+FF_enabled = true;
+integral_reset = true;
+[endEffectorTwist_e, wheelSpeeds, jointSpeeds] = FeedbackControl(q, Xd, Xd_next, Kp, Ki, dt, FF_enabled, integral_reset)
