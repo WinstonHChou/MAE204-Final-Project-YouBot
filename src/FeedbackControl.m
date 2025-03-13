@@ -17,7 +17,7 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, V_error] = FeedbackContr
     persistent prev_I;
 
     if isempty(prev_I)
-        prev_I = zeros(6);
+        prev_I = zeros(6,1);
     end
 
     load("youBotParams.mat")
