@@ -27,11 +27,10 @@ switch task
         q_0 = [0, 0, 0, pi/6, -pi/3, pi/6, -pi/3, pi/2, 0, 0, 0, 0]';
 
         % Define the initial configuration of the end-effector reference trajectory
-        T_se_initial = eye(4);
-        T_se_initial(3,4) = 0.5;
-
-        %Temp
-        % q_0(4:8) = IKinBody(B, M_0e, T_se_initial, q_0(4:8), 1e-6, 1e-6)
+        T_se_initial = [[ 0, 0, 1,   0];
+                        [ 0, 1, 0,   0];
+                        [-1, 0, 0, 0.5];
+                        [ 0, 0, 0,   1]];
 
         % Define the initial and final configurations of the cube
         T_sc_initial = [[1, 0, 0,    1];
@@ -52,8 +51,10 @@ switch task
         q_0 = [0, 0, 0, pi/6, -pi/3, pi/6, -pi/3, pi/2, 0, 0, 0, 0]';
 
         % Define the initial configuration of the end-effector reference trajectory
-        T_se_initial = eye(4);
-        T_se_initial(3,4) = 0.5;
+        T_se_initial = [[ 0, 0, 1,   0];
+                        [ 0, 1, 0,   0];
+                        [-1, 0, 0, 0.5];
+                        [ 0, 0, 0,   1]];
 
         % Define the initial and final configurations of the cube
         T_sc_initial = [[1, 0, 0,    1];
