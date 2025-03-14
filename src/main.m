@@ -13,16 +13,21 @@ load("youBotParams.mat")
 % Reset Integral Term Memory
 FeedbackControl(zeros(12,1), zeros(4,4), zeros(4,4), zeros(6,6), zeros(6,6), 0.1, false, true);
 
+% List of tasks
+tasks = ["feedforward","best","overshoot","new_task"];
+task = tasks(4); % USER INPUT: 1="feedforward", 2="best", 3="overshoot", 4="new_task"
+
+% If choose "new_task", set custom initial and goal poses 
+% for the block/cube ([x, y, theta] in world frame {s})
+cube_initial = [1, 0, 0];
+cube_final = [0, -1, -pi/2];
+
 % Maximum Joint Velocity
 max_joint_vel = 40;
 
-% List of tasks
-tasks = ["feedforward","best","overshoot","new task"];
-task = tasks(3); % USER INPUT
-
 %% Tasks
 switch task
-    case "new task"
+    case "new_task"
         % Given the initial states, q_0
         q_0 = [0, 0, 0, pi/6, -pi/3, pi/6, -pi/3, pi/2, 0, 0, 0, 0]';
 
@@ -33,14 +38,14 @@ switch task
                         [ 0, 0, 0,   1]];
 
         % Define the initial and final configurations of the cube
-        T_sc_initial = [[1, 0, 0,    1];
-                        [0, 1, 0,    0];
-                        [0, 0, 1, 0.025];
-                        [0, 0, 0,    1]];
-        T_sc_final = [[ 0, 1, 0,    0];
-                      [-1, 0, 0,   -1];
-                      [ 0, 0, 1, 0.025];
-                      [ 0, 0, 0,    1]];
+        T_sc_initial = [[cos(cube_initial(3)), -sin(cube_initial(3)), 0,  cube_initial(1)];
+                        [sin(cube_initial(3)),  cos(cube_initial(3)), 0,  cube_initial(2)];
+                        [                   0,                     0, 1,            0.025];
+                        [                   0,                     0, 0,                1]];
+        T_sc_final = [[cos(cube_final(3)), -sin(cube_final(3)), 0,  cube_final(1)];
+                      [sin(cube_final(3)),  cos(cube_final(3)), 0,  cube_final(2)];
+                      [                 0,                   0, 1,          0.025];
+                      [                 0,                   0, 0,              1]];
 
         Kp = eye(6);
         Ki = zeros(6,6);
@@ -140,14 +145,15 @@ q_grip(1:12, 1) = q_0_checked;
 q_grip(13, 1) = gripperStates(1);
 joints_checked = true(6, 1);
 
-% Main Simulation Loop
+% Simulation Loop
+fig = uifigure;
+dlg = uiprogressdlg(fig,'Title','Running Simulation Loop');
+
 integral_reset = false;
 for i = 1:(length(traj)-1)
-    fprintf("[Iteration #%d]\n", i)
     [V, wheelSpeeds, jointSpeeds, dV_errors(:, i), Jb{:, i}] = FeedbackControl(q_grip(1:12, i), Xd{i}, Xd{i+1}, Kp, Ki, dt, FF_enabled, integral_reset);
     [q_grip(1:12, i+1), joints_checked] = NextState(q_grip(1:12, i), [jointSpeeds; wheelSpeeds], dt, max_joint_vel);
     q_grip(13, i+1) = gripperStates(i+1);
-    fprintf("Joints checked: %f %f %f %f %f\n", joints_checked);
 
     % Update Actual Pose at i+1
     T_sb = [[cos(q_grip(1,i+1)), -sin(q_grip(1,i+1)), 0,  q_grip(2,i+1)];
@@ -157,7 +163,13 @@ for i = 1:(length(traj)-1)
     T_0e = FKinBody(M_0e, B, q_grip(4:8,i+1));
     T_se = T_sb * T_b0 * T_0e;
     X{1, i+1} = T_se;
+
+     dlg.Value = i/(length(traj)-1);
+     dlg.Message = sprintf("Iteration #%d:\n\nJoints Checked: [%d, %d, %d, %d, %d]\n", i, joints_checked);
 end
+
+close(dlg);
+delete(fig);
 
 %% Plot
 figure(1)
