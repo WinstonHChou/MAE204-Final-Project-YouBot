@@ -147,7 +147,7 @@ joints_checked = true(6, 1);
 
 % Simulation Loop
 fig = uifigure;
-dlg = uiprogressdlg(fig,'Title','Running Simulation Loop');
+dlg = uiprogressdlg(fig,'Title',sprintf('Running Simulation Loop: CASE="%s"', task));
 
 integral_reset = false;
 for i = 1:(length(traj)-1)
