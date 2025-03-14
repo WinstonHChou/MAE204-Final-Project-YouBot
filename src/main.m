@@ -7,15 +7,20 @@ clc; clear; close all;
 addpath('external/ModernRobotics/packages/MATLAB/mr')
 warning('off','all');
 %% Parameters Setup
+% load youBot Parameters
 load("youBotParams.mat")
+
+% Reset Integral Term Memory
+FeedbackControl(zeros(12,1), zeros(4,4), zeros(4,4), zeros(6,6), zeros(6,6), 0.1, false, true);
 
 % Maximum Joint Velocity
 max_joint_vel = 40;
 
 % List of tasks
 tasks = ["feedforward","best","overshoot","new task"];
-task = tasks(4);
+task = tasks(3); % USER INPUT
 
+%% Tasks
 switch task
     case "new task"
         % Given the initial states, q_0
@@ -38,10 +43,8 @@ switch task
                       [ 0, 0, 1, 0.025];
                       [ 0, 0, 0,    1]];
 
-        Kp = zeros(6,6);
-        Ki = zeros(6,6);
         Kp = eye(6);
-
+        Ki = zeros(6,6);
         FF_enabled = true;
 
     otherwise
@@ -61,6 +64,24 @@ switch task
                       [-1, 0, 0,   -1];
                       [ 0, 0, 1, 0.025];
                       [ 0, 0, 0,    1]];
+
+        switch task
+            case "best"
+                Kp = eye(6)*3;
+                Ki = zeros(6,6);
+                FF_enabled = true;
+            case "overshoot"
+                Kp = eye(6)*5;
+                Ki = eye(6)*0.5;
+                FF_enabled = false;
+            otherwise
+                % Force the actual initial state close to the reference
+                % initial waypoint
+                q_0(4:8) = IKinBody(B, M_0e, T_se_initial, q_0(4:8), 1e-6, 1e-6);
+                Kp = zeros(6,6);
+                Ki = zeros(6,6);
+                FF_enabled = true;
+        end
 end
 
 % Compute Current T_se (E-E frame to odom (Space) frame)
@@ -101,6 +122,7 @@ X = cell(1,length(traj));
 X{1,1} = T_se_0;
 Xd = traj;
 dV_errors = zeros(6, length(traj));
+Jb = cell(1,length(traj)-1);
 
 % Initialize state vectors with gripper state
 q_grip = zeros(13, length(traj));
@@ -119,17 +141,11 @@ joints_checked = true(6, 1);
 % Main Simulation Loop
 integral_reset = false;
 for i = 1:(length(traj)-1)
-    % True: move on to next step, False: repeat the step
-    joints_good = false;
     fprintf("[Iteration #%d]\n", i)
-    while ~joints_good
-        [V, wheelSpeeds, jointSpeeds, dV_errors(:, i)] = FeedbackControl(q_grip(1:12, i), Xd{i}, Xd{i+1}, Kp, Ki, dt, FF_enabled, integral_reset);
-        [q_grip(1:12, i+1), joints_checked] = NextState(q_grip(1:12, i), [jointSpeeds; wheelSpeeds], dt, max_joint_vel);
-        q_grip(13, i+1) = gripperStates(i+1);
-        joints_good = all(joints_checked);
-        fprintf("Joints checked: %f %f %f %f %f\n", joints_checked);
-        joints_good = true;
-    end
+    [V, wheelSpeeds, jointSpeeds, dV_errors(:, i), Jb{:, i}] = FeedbackControl(q_grip(1:12, i), Xd{i}, Xd{i+1}, Kp, Ki, dt, FF_enabled, integral_reset);
+    [q_grip(1:12, i+1), joints_checked] = NextState(q_grip(1:12, i), [jointSpeeds; wheelSpeeds], dt, max_joint_vel);
+    q_grip(13, i+1) = gripperStates(i+1);
+    fprintf("Joints checked: %f %f %f %f %f\n", joints_checked);
 
     % Update Actual Pose at i+1
     T_sb = [[cos(q_grip(1,i+1)), -sin(q_grip(1,i+1)), 0,  q_grip(2,i+1)];
@@ -141,6 +157,22 @@ for i = 1:(length(traj)-1)
     X{1, i+1} = T_se;
 end
 
-%% Output array to waypoint_array.csv
-% waypoint_array.csv will be located in Matlab's current directory
-writematrix(q_grip','state_array.csv')
+%% Plot
+figure(1)
+hold on
+plot(t,dV_errors(1,:))
+plot(t,dV_errors(2,:))
+plot(t,dV_errors(3,:))
+plot(t,dV_errors(4,:))
+plot(t,dV_errors(5,:))
+plot(t,dV_errors(6,:))
+xlabel("Time (sec)")
+ylabel("Twist Error (rad/s, m/s)")
+title("Trajectory Twist Errors")
+legend('wx' , 'wy', 'wz', 'vx', 'vy', 'vz')
+
+saveas(gcf, strcat('../png/',task,'_twist_error.png'));
+
+%% Output array to CSV
+% The csv files will be located in Matlab's current directory
+writematrix(q_grip', strcat(task,'_state_array.csv'))
