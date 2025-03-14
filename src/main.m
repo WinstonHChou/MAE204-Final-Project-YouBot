@@ -15,7 +15,7 @@ FeedbackControl(zeros(12,1), zeros(4,4), zeros(4,4), zeros(6,6), zeros(6,6), 0.1
 
 % List of tasks
 tasks = ["best","overshoot","new_task","feedforward","speed_limit"];
-task = tasks(3); % USER INPUT: 1="best", 2="overshoot", 3="new_task", 4="feedforward", 5="speed_limit"
+task = tasks(5); % USER INPUT: 1="best", 2="overshoot", 3="new_task", 4="feedforward", 5="speed_limit"
 
 % If choose "new_task", set custom initial and goal poses 
 % for the block/cube ([x, y, theta] in world frame {s})
@@ -80,6 +80,13 @@ switch task
                 Kp = eye(6)*5;
                 Ki = eye(6)*0.5;
                 FF_enabled = false;
+            case "speed_limit"
+                % Overide speed limit to see how it'd affect the
+                % performance
+                max_joint_vel = 5;
+                Kp = eye(6)*3;
+                Ki = zeros(6,6);
+                FF_enabled = true;
             otherwise
                 % Force the actual initial state close to the reference
                 % initial waypoint (Fine Tuned, Do Not Change)
