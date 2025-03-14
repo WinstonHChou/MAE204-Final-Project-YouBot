@@ -19,8 +19,8 @@ task = tasks(4); % USER INPUT: 1="feedforward", 2="best", 3="overshoot", 4="new_
 
 % If choose "new_task", set custom initial and goal poses 
 % for the block/cube ([x, y, theta] in world frame {s})
-cube_initial = [1, 0, 0];
-cube_final = [0, -1, -pi/2];
+cube_initial = [1, 1, 0];
+cube_final = [1, -1, -pi/3];
 
 % Maximum Joint Velocity
 max_joint_vel = 40;
