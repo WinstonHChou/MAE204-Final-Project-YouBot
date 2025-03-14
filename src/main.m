@@ -77,8 +77,9 @@ switch task
                 FF_enabled = false;
             otherwise
                 % Force the actual initial state close to the reference
-                % initial waypoint
-                q_0(4:8) = IKinBody(B, M_0e, T_se_initial, q_0(4:8), 1e-6, 1e-6);
+                % initial waypoint (Fine Tuned, Do Not Change)
+                q_0(2) = -0.478;
+                q_0(4:8) = [0, 0.075, -0.642, -1.025, 0]';
                 Kp = zeros(6,6);
                 Ki = zeros(6,6);
                 FF_enabled = true;
