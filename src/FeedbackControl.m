@@ -1,4 +1,4 @@
-function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt, FF_enabled, integral_reset)
+function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error, Jb] = FeedbackControl(q, T_se_d, T_se_d_next, Kp, Ki, dt, FF_enabled, integral_reset)
 %FEEDBACKCONTROL Summary of this function goes here
 %   Inputs: 
 %   - q             : The current state vector (12 variables)
@@ -15,6 +15,7 @@ function [endEffectorTwist_e, wheelSpeeds, jointSpeeds, dV_error] = FeedbackCont
 %   - wheelSpeeds        : Commanded wheel speeds (u)
 %   - jointSpeeds        : Commanded arm joint speeds (theta_dot)
 %   - dV_error           : Current error twist
+%   - Jb                 : Body Jacobian of the end-effector
 
     % Running error 
     persistent prev_I;
