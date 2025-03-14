@@ -165,7 +165,7 @@ for i = 1:(length(traj)-1)
     X{1, i+1} = T_se;
 
      dlg.Value = i/(length(traj)-1);
-     dlg.Message = sprintf("Iteration #%d:\n\nJoints Checked: [%d, %d, %d, %d, %d]\n", i, joints_checked);
+     dlg.Message = sprintf("Iteration #%d / %d:\n\nJoints Checked: [%d, %d, %d, %d, %d]\n", i, length(traj)-1, joints_checked);
 end
 
 close(dlg);
