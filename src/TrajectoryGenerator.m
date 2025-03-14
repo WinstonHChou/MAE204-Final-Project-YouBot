@@ -22,12 +22,10 @@ function [traj, gripperStates] = TrajectoryGenerator(T_se_initial, T_sc_initial,
     N = k / 0.01;
     
     T_se_standoff_intial = T_sc_initial * T_ce_standoff;
+    T_se_grasp_initial = T_sc_initial * T_ce_grasp;
     
-    T_se_standoff_final = T_sc_final * T_ce_standoff;
-    T_se_standoff_final(3,4) = 0.15;
-    
-    T_se_grasp_final = T_se_standoff_final;
-    T_se_grasp_final(3,4) = 0.025;
+    T_se_standoff_final = T_sc_final * T_ce_standoff;    
+    T_se_grasp_final = T_sc_final * T_ce_grasp;
 
     %% Initialize trajectories
     % Starting Position  --> Standoff over Cube
@@ -39,7 +37,7 @@ function [traj, gripperStates] = TrajectoryGenerator(T_se_initial, T_sc_initial,
     % End-Effector Grasp --> End-Effector Grasp 0.625
     % End-Effector Grasp --> End-Effector Standoff
     
-    X = {T_se_initial, T_se_standoff_intial, T_ce_grasp, T_ce_grasp, T_se_standoff_intial, T_se_standoff_final, T_se_grasp_final, T_se_grasp_final, T_se_standoff_final};
+    X = {T_se_initial, T_se_standoff_intial, T_se_grasp_initial, T_se_grasp_initial, T_se_standoff_intial, T_se_standoff_final, T_se_grasp_final, T_se_grasp_final, T_se_standoff_final};
     Xstarts = X(1:end-1);
     Xends = X(2:end);
     desired_durations = [3, 1, 1, 2, 3, 2, 1, 1];
