@@ -10,7 +10,7 @@ warning('off','all');
 load("youBotParams.mat")
 
 % Maximum Joint Velocity
-max_joint_vel = 50;
+max_joint_vel = 40;
 
 % List of tasks
 tasks = ["feedforward","best","overshoot","new task"];
@@ -72,14 +72,19 @@ T_0e_0 = FKinBody(M_0e, B, q_0(4:8));
 T_se_0 = T_sb_0 * T_b0 * T_0e_0;
 
 % Define transformations for standoff and grasp configurations
+pitchOffset = pi/6;
+rotY = [[ cos(pitchOffset), 0, sin(pitchOffset), 0];
+        [                0, 1,                0, 0];
+        [-sin(pitchOffset), 0, cos(pitchOffset), 0];
+        [                0, 0,                0, 1]];
 T_ce_standoff = [[ 0, 0, 1,    0];
                  [ 0, 1, 0,    0];
                  [-1, 0, 0, 0.20];
-                 [ 0, 0, 0,    1]];
+                 [ 0, 0, 0,    1]] * rotY;
 T_ce_grasp = [[ 0, 0, 1,    1];
               [ 0, 1, 0,    0];
-              [-1, 0, 0, 0.05];
-              [ 0, 0, 0,    1]];
+              [-1, 0, 0, 0.025];
+              [ 0, 0, 0,    1]] * rotY;
 
 %% Trajectories
 
