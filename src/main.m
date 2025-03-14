@@ -26,7 +26,7 @@ switch task
         T_se_initial(3,4) = 0.5;
 
         %Temp
-        q_0(4:8) = IKinBody(B, M_0e, T_se_initial, q_0(4:8), 1e-6, 1e-6)
+        % q_0(4:8) = IKinBody(B, M_0e, T_se_initial, q_0(4:8), 1e-6, 1e-6)
 
         % Define the initial and final configurations of the cube
         T_sc_initial = [[1, 0, 0,    1];
