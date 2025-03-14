@@ -19,7 +19,7 @@ task = tasks(4);
 switch task
     case "new task"
         % Given the initial states, q_0
-        q_0 = [0, 0, 0, pi/6, -pi/6, pi/3, -pi/2, pi/2, 0, 0, 0, 0]';
+        q_0 = [0, 0, 0, pi/6, -pi/3, pi/6, -pi/3, pi/2, 0, 0, 0, 0]';
 
         % Define the initial configuration of the end-effector reference trajectory
         T_se_initial = eye(4);
@@ -46,7 +46,7 @@ switch task
 
     otherwise
         % Given the initial states, q_0
-        q_0 = [0, 0, 0, pi/6, -pi/6, pi/3, -pi/2, pi/2, 0, 0, 0, 0]';
+        q_0 = [0, 0, 0, pi/6, -pi/3, pi/6, -pi/3, pi/2, 0, 0, 0, 0]';
 
         % Define the initial configuration of the end-effector reference trajectory
         T_se_initial = eye(4);
