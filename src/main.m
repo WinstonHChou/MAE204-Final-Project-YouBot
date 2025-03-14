@@ -14,8 +14,8 @@ load("youBotParams.mat")
 FeedbackControl(zeros(12,1), zeros(4,4), zeros(4,4), zeros(6,6), zeros(6,6), 0.1, false, true);
 
 % List of tasks
-tasks = ["feedforward","best","overshoot","new_task"];
-task = tasks(4); % USER INPUT: 1="feedforward", 2="best", 3="overshoot", 4="new_task"
+tasks = ["best","overshoot","new_task","feedforward","speed_limit"];
+task = tasks(3); % USER INPUT: 1="best", 2="overshoot", 3="new_task", 4="feedforward", 5="speed_limit"
 
 % If choose "new_task", set custom initial and goal poses 
 % for the block/cube ([x, y, theta] in world frame {s})
@@ -157,9 +157,9 @@ for i = 1:(length(traj)-1)
 
     % Update Actual Pose at i+1
     T_sb = [[cos(q_grip(1,i+1)), -sin(q_grip(1,i+1)), 0,  q_grip(2,i+1)];
-              [sin(q_grip(1,i+1)),  cos(q_grip(1,i+1)), 0,  q_grip(3,i+1)];
-              [                 0,                   0, 1,             z0];
-              [                 0,                   0, 0,              1]];
+            [sin(q_grip(1,i+1)),  cos(q_grip(1,i+1)), 0,  q_grip(3,i+1)];
+            [                 0,                   0, 1,             z0];
+            [                 0,                   0, 0,              1]];
     T_0e = FKinBody(M_0e, B, q_grip(4:8,i+1));
     T_se = T_sb * T_b0 * T_0e;
     X{1, i+1} = T_se;
@@ -172,6 +172,7 @@ close(dlg);
 delete(fig);
 
 %% Plot
+% Plot Twist Errors Along Time
 figure(1)
 hold on
 plot(t,dV_errors(1,:))
@@ -186,6 +187,31 @@ title("Trajectory Twist Errors")
 legend('wx' , 'wy', 'wz', 'vx', 'vy', 'vz')
 
 saveas(gcf, strcat('../png/',task,'_twist_error.png'));
+
+% Post-Analysis on Manipulability
+mu1_w = zeros(length(traj)-1);
+mu1_v = zeros(length(traj)-1);
+for i=1:(length(traj)-1)
+    Jb_i = Jb{:,i};
+    Jw = Jb_i(1:3,:);      Jv = Jb_i(4:end,:);
+    Aw = Jw*Jw';           Av = Jv*Jv';
+    [v_Aw,D_Aw] = eig(Aw); [v_Av,D_Av] = eig(Av);
+    lambda_Aw = max(D_Aw); lambda_Av = max(D_Av);
+    mu1_w(i) = sqrt(max(lambda_Aw) / min(lambda_Aw));
+    mu1_v(i) = sqrt(max(lambda_Av) / min(lambda_Av));
+end
+
+% Plot Manipulabilities Along Time
+figure(2)
+hold on
+plot(t(2:end), mu1_w)
+plot(t(2:end), mu1_v)
+xlabel("Time (sec)")
+ylabel("Manipulabilities")
+title("Trajectory Manipulability")
+legend('Angular \mu_1' , 'Linear \mu_1', 'Location', 'best')
+
+saveas(gcf, strcat('../png/',task,'_manipulability.png'));
 
 %% Output array to CSV
 % The csv files will be located in Matlab's current directory
