@@ -27,7 +27,7 @@ function [traj, gripperStates] = TrajectoryGenerator(T_se_initial, T_sc_initial,
     T_se_standoff_final(3,4) = 0.15;
     
     T_se_grasp_final = T_se_standoff_final;
-    T_se_grasp_final(3,4) = 0.025;
+    T_se_grasp_final(3,4) = 0.0265;
 
     %% Initialize trajectories
     % Starting Position  --> Standoff over Cube
