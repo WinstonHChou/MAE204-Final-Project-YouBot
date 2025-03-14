@@ -23,10 +23,18 @@ git clone --recurse-submodules https://github.com/WinstonHChou/MAE204-Final-Proj
 ## Running the Project
 ### Standard Run:
 - __Task__: Select task type `(1 to 5)` at `line 18`
+    ```cpp
+    TASK DEFINITION:
+    1 -> "best": P Controller + FeedForward
+    2 -> "overshoot": PI Controller, No FeedForward
+    3 -> "new_task": Customized Case
+    4 -> "feedforward": Only FeedForward, and starts at exact initial state of the trajectory
+    5 -> "speed_limit": Has maximum joint velocity of 5, compared to default of 40
+    ```
     ```matlab
     task = tasks(1); % USER INPUT: 1="best", 2="overshoot", 3="new_task", 4="feedforward", 5="speed_limit"
     ```
-- __Cube Poses__: Select cube poses at `line 20 - 23` (If chosen `"new_task"`)
+- __Cube Poses__: Select cube poses at `line 20-23` (If chosen `"new_task"`)
     ```matlab
     % If choose "new_task", set custom initial and goal poses 
     % for the block/cube ([x, y, theta] in world frame {s})
