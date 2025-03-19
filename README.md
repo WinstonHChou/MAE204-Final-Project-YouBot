@@ -15,13 +15,14 @@ This software will consist of 4 main components:
 
 ## Prerequisites
 - Install **`MATLAB 2024b`**
+- Install [**`CoppeliaSim EDU`**](https://www.coppeliarobotics.com/), and download [**`V-REP_scenes`**](https://hades.mech.northwestern.edu/images/5/5c/V-REP_scenes.zip)
 - Clone the repository:
 ```bash
 git clone --recurse-submodules https://github.com/WinstonHChou/MAE204-Final-Project-YouBot.git
 ```
 
 ## Running the Project
-### Standard Run:
+### Standard Run "`main.m`":
 - __Task__: Select task type `(1 to 5)` at `line 18`
     ```cpp
     TASK DEFINITION:
@@ -54,3 +55,37 @@ git clone --recurse-submodules https://github.com/WinstonHChou/MAE204-Final-Proj
     Ki = zeros(6,6);
     FF_enabled = true;
     ```
+
+### Outputs:
+- CSV files for CoppeliaSim EDU, **Scene 6: CSV Mobile Manipulation youBot**, are saved in `src/`, with naming of **"<CASE_NAME>_state_array"**. Please load the csv you want to test into CoppeliaSim.
+
+## Results
+### "Best" Case
+- Error Twist Plot:
+    ![img](png/best_twist_error.png)
+- Manipulability Plot:
+    ![img](png/best_manipulability.png)
+### "Overshoot" Case
+- Error Twist Plot:
+    ![img](png/overshoot_twist_error.png)
+- Manipulability Plot:
+    ![img](png/overshoot_manipulability.png)
+### "New Task" Case
+- Error Twist Plot:
+    ![img](png/new_task_twist_error.png)
+- Manipulability Plot:
+    ![img](png/new_task_manipulability.png)
+### "Feedforward" Case
+- Error Twist Plot:
+    ![img](png/feedforward_twist_error.png)
+- Manipulability Plot:
+    ![img](png/feedforward_manipulability.png)
+### "Speed Limit" Case
+- Error Twist Plot:
+    ![img](png/speed_limit_twist_error.png)
+- Manipulability Plot:
+    ![img](png/speed_limit_manipulability.png)
+
+
+## Acknowledgments
+This project is part of the **MAE 204** course at **UC San Diego**. For project instructions, please refer to [Final Project Guideline](pdf/MAE204_WI25_Final_Project.pdf).
